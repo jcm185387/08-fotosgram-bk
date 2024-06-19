@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { Usuario } from "../models/usuario.model";
 import bcrypt from 'bcrypt';
-import Token from '../dist/classes/token';
+import Token from '../classes/token';
 import { verificaToken } from "../middlewares/autenticacion";
 
 const userRoutes = Router();
@@ -75,7 +75,7 @@ userRoutes.post('/create', (req: Request, res: Response ) => {
 
 });
 //actualizar usuario
-userRoutes.post('/update', verificaToken, (req: any, res: Response ) => {
+userRoutes.post('/update', [verificaToken], (req: any, res: Response ) => {
     const user = {
         nombre:     req.body.nombre || req.usuario.nombre,
         email:      req.body.email || req.usuario.email,
@@ -105,7 +105,18 @@ userRoutes.post('/update', verificaToken, (req: any, res: Response ) => {
         });
 
     });
-})
+});
+
+
+userRoutes.get('/', [verificaToken], (req: any, res : Response) => {
+
+    const usuario = req.usuario;
+
+    res.json({
+        ok: true,
+        usuario
+    });
+});
 
 
 export default userRoutes;

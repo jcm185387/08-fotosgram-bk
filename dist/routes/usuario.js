@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const usuario_model_1 = require("../models/usuario.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const token_1 = __importDefault(require("../dist/classes/token"));
+const token_1 = __importDefault(require("../classes/token"));
 const autenticacion_1 = require("../middlewares/autenticacion");
 const userRoutes = (0, express_1.Router)();
 //Login
@@ -68,7 +68,7 @@ userRoutes.post('/create', (req, res) => {
     });
 });
 //actualizar usuario
-userRoutes.post('/update', autenticacion_1.verificaToken, (req, res) => {
+userRoutes.post('/update', [autenticacion_1.verificaToken], (req, res) => {
     const user = {
         nombre: req.body.nombre || req.usuario.nombre,
         email: req.body.email || req.usuario.email,
@@ -93,6 +93,13 @@ userRoutes.post('/update', autenticacion_1.verificaToken, (req, res) => {
             ok: true,
             tokenUser
         });
+    });
+});
+userRoutes.get('/', [autenticacion_1.verificaToken], (req, res) => {
+    const usuario = req.usuario;
+    res.json({
+        ok: true,
+        usuario
     });
 });
 exports.default = userRoutes;
